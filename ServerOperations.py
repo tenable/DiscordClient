@@ -21,6 +21,7 @@ class ServerOperations():
         self.__media_server = None
         self.__socket = sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__channel_id = None
+        self.__guild_id = None
         self.__video = video
         self.__http_token = self.__http_server.GetToken()
         self.__media_token = None
@@ -29,9 +30,10 @@ class ServerOperations():
         self.__user_id = None
         self.__session_id = None
 
-    def CallChannel(self, channel_id):
+    def CallChannel(self, channel_id, guild_id):
         self.__channel_id = channel_id
-        token = self.__gateway_server.RequestMediaToken(self.__channel_id)
+        self.__guild_id = guild_id
+        token = self.__gateway_server.RequestMediaToken(self.__channel_id, self.__guild_id)
         endpoint = self.__gateway_server.GetEndpoint()
         self.__server_id = self.__gateway_server.GetServerId()
         self.__user_id = self.__gateway_server.GetUserId()

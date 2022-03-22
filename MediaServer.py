@@ -14,7 +14,7 @@ class MediaServer():
         '''
         Taken from https://discordapp.com/developers/docs/topics/opcodes-and-status-codes#voice-opcodes
         '''
-        # Name              Code    Sent by     Description  
+        # Name              Code    Sent by     Description
         IDENTIFY            = 0     # client    begin a voice websocket connection
         SELECT_PROTOCOL     = 1     # client    select the voice protocol
         READY               = 2     # server    complete the websocket handshake
@@ -35,7 +35,7 @@ class MediaServer():
         self.__ws = websocket.WebSocket(sslopt={"check_hostname": False, "cert_reqs": ssl.CERT_NONE})
         self.__ws.settimeout(5)
         self.__server_id = server_id
-        self.__endpoint = "wss://{}/?v=4".format(endpoint.split(':')[0])
+        self.__endpoint= bytes("wss://{}/?v=4".format(endpoint.split(b':')[0]), 'utf-8')
         self.__token = token
         self.__media_session_id = None
         self.__av_client_port = None
@@ -76,9 +76,9 @@ class MediaServer():
 
     def StartStream(self):
         if self.__proxy_host != False and self.__proxy_port != False:
-            self.__ws.connect(self.__endpoint, http_proxy_host=self.__proxy_host, http_proxy_port=self.__proxy_port, header={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36"})
+            self.__ws.connect(self.__endpoint, http_proxy_host=self.__proxy_host, http_proxy_port=self.__proxy_port, header={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9004 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36"})
         else:
-            self.__ws.connect(self.__endpoint, header={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36"})
+            self.__ws.connect(self.__endpoint, header={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9004 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36"})
         Logger.LogMessage("Starting media server stream")
         self.__hello()
         self.__getServerNetworkSettings()
