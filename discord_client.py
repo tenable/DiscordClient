@@ -23,5 +23,5 @@ class DiscordClient:
 if __name__ == '__main__':
         #dc = DiscordClient(user_email="your_email", user_password="your_password")
         #dc.Call(channel_id=b'right_click_voice_channel_and_copy_id', guild_id=b'the_first_one_in_the_url')
-        #dc.SendCallStatus('000000000000000100000000000000000000000080bc07b0'.decode('hex'))
-        #dc.SendCallAudio(msg=)
+        dc.SendCallStatus(bytes.fromhex('000000000000000100000000000000000000000080bc07b0'))
+        #dc.SendCallAudio(msg=b"")

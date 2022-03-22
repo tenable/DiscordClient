@@ -35,10 +35,10 @@ class ServerOperations():
         self.__guild_id = guild_id
         token = self.__gateway_server.RequestMediaToken(self.__channel_id, self.__guild_id)
         endpoint = self.__gateway_server.GetEndpoint().decode("utf-8")
-        self.__server_id = self.__gateway_server.GetServerId()
+        #self.__server_id = self.__gateway_server.GetServerId()
         self.__user_id = self.__gateway_server.GetUserId()
         self.__session_id = self.__gateway_server.GetSessionId()
-        self.__media_server = MediaServer(endpoint, self.__server_id,  self.__user_id, self.__session_id, self.__proxy_host, self.__proxy_port, token)
+        self.__media_server = MediaServer(endpoint, guild_id.decode("utf-8"),  self.__user_id, self.__session_id, self.__proxy_host, self.__proxy_port, token)
         self.__media_server.StartStream()
 
     def SendCallAudio(self, msg):

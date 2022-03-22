@@ -36,11 +36,11 @@ class MediaServer():
         self.__ws.settimeout(5)
         self.__server_id = server_id
         self.__endpoint = "wss://{}/?v=4".format(endpoint.split(':')[0])
-        self.__token = token
+        self.__token = token.decode("utf-8")
         self.__media_session_id = None
         self.__av_client_port = None
         self.__user_id = user_id
-        self.__session_id = session_id
+        self.__session_id = session_id.decode("utf-8")
         self.__isSpeaking = False
         self.__isSharingImage = False
         self.__secret_key = None

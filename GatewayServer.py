@@ -103,9 +103,9 @@ class GatewayServer():
         if b'user_id' in self.__session_settings:
             return self.__session_settings[b'user_id']
 
-    def GetServerId(self): # Discord also calls this "channel id"
-        if b'channel_id' in self.__session_settings:
-            return self.__session_settings[b'channel_id']
+    #def GetServerId(self): # Discord also calls this "channel id"
+        #if b'channel_id' in self.__session_settings:
+            #return self.__session_settings[b'channel_id']
 
     def __recvUntilKey(self, target_key):
         while True:
@@ -131,6 +131,7 @@ class GatewayServer():
                         OtpErlangBinary(b'self_mute',bits=8): False,
                         OtpErlangBinary(b'self_deaf',bits=8): False,
                         OtpErlangBinary(b'self_video',bits=8): False
+                        #OtpErlangBinary(b'preferred_region',bits=8): OtpErlangBinary(b'rotterdam',bits=8)
                         }
                     }
         ring_data = erlang.term_to_binary(ring_data)
