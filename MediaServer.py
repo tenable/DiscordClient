@@ -35,7 +35,7 @@ class MediaServer():
         self.__ws = websocket.WebSocket(sslopt={"check_hostname": False, "cert_reqs": ssl.CERT_NONE})
         self.__ws.settimeout(5)
         self.__server_id = server_id
-        self.__endpoint= bytes("wss://{}/?v=4".format(endpoint.split(b':')[0]), 'utf-8')
+        self.__endpoint = "wss://{}/?v=4".format(endpoint.split(':')[0])
         self.__token = token
         self.__media_session_id = None
         self.__av_client_port = None
