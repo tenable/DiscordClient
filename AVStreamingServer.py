@@ -54,14 +54,14 @@ class AVStreamingServer:
         self.__CurrentPacketNumAudio = self.__CurrentPacketNumAudio+1
 
     def SendScreenImage(self, data):
-        cipherText = '\x90\x67{}\x7f\xf2\x05\x57\x00\x00\x00\x05'.format(struct.pack('>h', self.__CurrentPacketNumImage))
+        cipherText = bytes('\x90\x67{}\x7f\xf2\x05\x57\x00\x00\x00\x05'.format(struct.pack('>h', self.__CurrentPacketNumImage)), 'utf-8')
         cipherText = cipherText + self.__encrypt(data)
         cipherText = cipherText + struct.pack('<I', self.__CurrentPacketNumImage)
         self.__sock.send(cipherText)
         self.__CurrentPacketNumImage = self.__CurrentPacketNumImage + 1
 
     def __encrypt(self, plaintext):
-        cipherText =  libnacl.crypto_secretbox(plaintext, struct.pack('<I', self.__CurrentPacketNumAudio) + b"\x00" * 20, self.__secret_key)
+        cipherText = libnacl.crypto_secretbox(plaintext, struct.pack('<I', self.__CurrentPacketNumAudio) + b"\x00" * 20, self.__secret_key)
         if(self.__CurrentPacketNumAudio > 32766):
             self.__CurrentPacketNumAudio = 0
         return cipherText
