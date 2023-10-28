@@ -22,7 +22,7 @@ class AVStreamingServer:
 
     def GetExternalClientPort(self):
         # TODO figure data this out
-        self.__sock.send('0001004600000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'.decode('hex'))
+        self.__sock.send(bytes.fromhex('0001004600000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'))
         response = self.__sock.recv(1024)
         self.__client_udp_port = struct.unpack(">H", response[-2::])[0]
         Logger.LogMessage("Obtained client's external UDP port: {}".format(self.__client_udp_port))
@@ -40,42 +40,42 @@ class AVStreamingServer:
             self.__decrypt(data)
 
     def SendStatus(self, msg):
-        cipherText = '\x80\xc8\x00\x06\x00\x00\x00\x01'
+        cipherText = b'\x80\xc8\x00\x06\x00\x00\x00\x01'
         cipherText = cipherText+self.__encrypt(msg)
         cipherText = cipherText + struct.pack('<I', self.__CurrentPacketNumAudio)
         self.__sock.send(cipherText)
         self.__CurrentPacketNumAudio = self.__CurrentPacketNumAudio + 1
 
     def SendAudio(self, msg):
-        cipherText = '\x90\x78{}\x2f\xa5\x6c\xab\x00\x00\x00\x01'.format(struct.pack('>h', self.__CurrentPacketNumAudio))
+        cipherText = bytes('\x90\x78{}\x2f\xa5\x6c\xab\x00\x00\x00\x01'.format(struct.pack('>h', self.__CurrentPacketNumAudio)), 'utf-8')
         cipherText = cipherText + self.__encrypt(msg)
         cipherText = cipherText + struct.pack('<I', self.__CurrentPacketNumAudio)
         self.__sock.send(cipherText)
         self.__CurrentPacketNumAudio = self.__CurrentPacketNumAudio+1
 
     def SendScreenImage(self, data):
-        cipherText = '\x90\x67{}\x7f\xf2\x05\x57\x00\x00\x00\x05'.format(struct.pack('>h', self.__CurrentPacketNumImage))
+        cipherText = bytes('\x90\x67{}\x7f\xf2\x05\x57\x00\x00\x00\x05'.format(struct.pack('>h', self.__CurrentPacketNumImage)), 'utf-8')
         cipherText = cipherText + self.__encrypt(data)
         cipherText = cipherText + struct.pack('<I', self.__CurrentPacketNumImage)
         self.__sock.send(cipherText)
         self.__CurrentPacketNumImage = self.__CurrentPacketNumImage + 1
 
     def __encrypt(self, plaintext):
-        cipherText =  libnacl.crypto_secretbox(plaintext, struct.pack('<I', self.__CurrentPacketNumAudio) + "\x00" * 20, self.__secret_key)
+        cipherText = libnacl.crypto_secretbox(plaintext, struct.pack('<I', self.__CurrentPacketNumAudio) + b"\x00" * 20, self.__secret_key)
         if(self.__CurrentPacketNumAudio > 32766):
             self.__CurrentPacketNumAudio = 0
         return cipherText
 
     def __decrypt(self, msg):
-        nonce = msg[-4:]+"\x00"*20
+        nonce = msg[-4:]+b"\x00"*20
         if msg[:2] == '\x81\xc9':
             msg = msg[0x18:-4]
         elif msg[:2] == '\x90\x78':
             msg = msg[0x1C:-4]
         else:
             msg = msg[0x18:-4]
-            Logger.LogMessage('wtf header received: {}'.format(msg.encode('hex')), log_level=LogLevel.WARNING)
+            Logger.LogMessage('wtf header received: {}'.format(msg.hex()), log_level=LogLevel.WARNING)
 
         plaintext = libnacl.crypto_secretbox(msg, nonce, self.__secret_key)
-        Logger.LogMessage("Decrypted %d bytes %s:" % (len(plaintext), plaintext[0x10:].encode('hex')))
+        Logger.LogMessage("Decrypted %d bytes %s:" % (len(plaintext), plaintext[0x10:].hex()))
         return plaintext
